@@ -1,87 +1,205 @@
-library(shiny)
 
 
 shinyServer(function(input, output, session){
   
-  #displayed data frame
-  # display_df = reactive({
-  #   workGKV %>%
-  #     select(., Name, Premium_rate, Rate)
-  # })
   
-#filtering for the county Input
+  #filtering for the county Input and calcutlating the input 
   county_df = reactive({
+    return_df = NULL
     if(input$county == "Baden-Württemberg") {
-      workGKV %>%
-        filter(., Baden_Württemberg == "True")
+      return_df = workGKV %>%
+        filter(., Baden_Württemberg == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else if(input$county == "Bayern") {
-      workGKV %>%
-        filter(., Bayern == "True")
+      return_df = workGKV %>%
+        filter(., Bayern == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else if(input$county == "Berlin") {
-      workGKV %>%
-        filter(., Berlin == "True")
+      return_df = workGKV %>%
+        filter(., Berlin == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else if(input$county == "Brandenburg") {
-      workGKV %>% 
-        filter(., Brandenburg == "True")
+      return_df = workGKV %>%
+        filter(., Brandenburg == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else if(input$county == "Bremen") {
-      workGKV %>%
-        filter(., Bremen == "True")
+      return_df = workGKV %>%
+        filter(., Bremen == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else if(input$county == "Hamburg") {
-      workGKV %>%
-        filter(., Hamburg == "True")
+      return_df = workGKV %>%
+        filter(., Hamburg == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else if(input$county == "Hessen") {
-      workGKV %>%
-        filter(., Hessen == "True")
+      return_df = workGKV %>%
+        filter(., Hessen == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else if(input$county == "Mecklenburg-Vorpommern") {
-      workGKV %>%
-        filter(., Mecklenburg_Vorpommern == "True")
+      return_df = workGKV %>%
+        filter(., Mecklenburg_Vorpommern == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else if(input$county == "Niedersachsen") {
-      workGKV %>%
-        filter(., Niedersachsen == "True")
+      return_df = workGKV %>%
+        filter(., Niedersachsen == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else if(input$county == "Nordrhein-Westfalen") {
-      workGKV %>%
-        filter(., Nordrhein_Westfalen == "True")
+      return_df = workGKV %>%
+        filter(., Nordrhein_Westfalen == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else if(input$county == "Rheinland-Pfalz") {
-      workGKV %>%
-        filter(., Rheinland_Pfalz == "True")
+      return_df = workGKV %>%
+        filter(., Rheinland_Pfalz == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else if(input$county == "Saarland") {
-      workGKV %>%
-        filter(., Saarland == "True")
+      return_df = workGKV %>%
+        filter(., Saarland == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else if(input$county == "Sachsen") {
-      workGKV %>%
-        filter(., Sachsen == "True")
+      return_df = workGKV %>%
+        filter(., Sachsen == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else if(input$county == "Sachsen-Anhalt") {
-      workGKV %>%
-        filter(., Sachsen_Anhalt == "True")
+      return_df = workGKV %>%
+        filter(., Sachsen_Anhalt == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else if(input$county == "Schleswig-Holstein") {
-      workGKV %>% 
-        filter(., Schleswig_Holtstein == "True") 
+      return_df = workGKV %>%
+        filter(., Schleswig_Holtstein == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else if(input$county == "Thüringen") {
-      workGKV %>%
-        filter(., Thüringen == "True")
+      return_df = workGKV %>%
+        filter(., Thüringen == "True") %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
+
+
     } else {
-      workGKV
+      return_df = workGKV %>%
+        mutate(., Rate = (Rate - 0.073) * input$income)
     }
-  
     
+    
+    # filterin for the bonus inputs
+    if(!is.null(input$bonus)) {
+      
+      if("Check_Up" %in% input$bonus) {
+        return_df = return_df  %>%
+          filter(., Check_up == TRUE)
+      }
+      
+      if("Cancer-Screeing" %in% input$bonus) {
+        return_df = return_df %>%
+          filter(., Cancer_screening == TRUE)
+      }
+      
+      if("Skin Cancer" %in% input$bonus) {
+        return_df = return_df %>%
+          filter(., skinCancer == TRUE)
+      }
+
+      if("Yearly Dentist" %in% input$bonus) {
+        return_df = return_df %>%
+          filter(., yearly_dentist == TRUE)
+      }
+
+      if("No Smoking" %in% input$bonus) {
+        return_df = return_df %>%
+          filter(., non_smoker == TRUE)
+      }
+
+      if("BMI" %in% input$bonus) {
+        return_df = return_df %>%
+          filter(., BMI == TRUE)
+      }
+
+      if("Gym" %in% input$bonus) {
+        return_df = return_df %>%
+          filter(., gym == TRUE)
+      }
+    }
+
+
+    # #filtering for naturpathy inputs
+    
+    if(!is.null(input$natur)) {
+
+      if("Ayurveda" %in% input$natur) {
+        return_df = return_df %>%
+          filter(., Ayurveda == TRUE)
+      }
+
+      if("Homeopathy" %in% input$natur) {
+        return_df = return_df %>%
+          filter(., HomoeopathyTherapy == TRUE)
+      }
+
+      if("Osteopathy" %in% input$natur) {
+        return_df = return_df %>%
+          filter(., Osteopathy == TRUE)
+      }
+
+      if("Reflexmassage" %in% input$natur) {
+        return_df = return_df %>%
+          filter(., Reflexmassage == TRUE)
+      }
+
+      if("TCM" %in% input$natur) {
+        return_df = return_df %>%
+          filter(., TCM == TRUE)
+      }
+
+    }
+
+
+    
+    return_df
+
   })
 
+
   
-  output$myincome <- renderText(input$income)
-  
-  # output$GKVtable <- renderTable({
-  #   county_df()
-  #   
-  # output$data <- renderTable({
-  #   mtcars[, c("mpg", input$variable), drop = FALSE]
-  # }, rownames = TRUE)
-  # 
+  output$GKVtableUnder <- DT::renderDataTable({
+    datatable(county_df() %>% 
+                select(., Name, Premium_rate, Rate) %>%
+                # filter(., Rate < mean(Rate)) %>%
+                arrange(., Rate))
+  })
+
+  # output$barRate = renderPlot({
+  #   ggplot(data = county_df(), aes(x = Rate)) +
+  #     geom_bar(aes(fill = Rate)) + 
+  #     ggtitle("Rates distributed in each County") +
+  #     xlab("rates")
   # })
   
-  output$GKVtable <- DT::renderDataTable({
-    datatable(county_df() %>% 
-                #filter(., input$county == "True") %>%
-                select(., Name, Premium_rate, Rate))
-    })
- 
+  
 })
